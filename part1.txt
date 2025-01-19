@@ -1,0 +1,48 @@
+$ initdb --locale=C -E UTF-8 /usr/local/opt/postgresql@17
+$ brew services start postgresql@17
+$ brew services list
+$ brew services stop postgresql@17
+$ brew info postgresql@17
+$ brew doctor
+$ brew link postgresql
+
+$ which initdb
+
+$ psql -U $(whoami) -d postgres
+
+
+
+CREATE TABLE IF NOT EXIST student (
+	student_id SERIAL PRIMARY KEY,
+	username VARCHAR(128) NOT NULL
+);
+
+DROP TABLE IF EXIST student;
+
+CREATE TAbLE student (
+	student_id serial PRIMARY KEY,
+	username VARCHAR (128) UNIQUE NOT NULL,
+	password VARCHAR (128) NOT NULL,
+	is_new BOOLEAN,
+	year_born INTEGER NOT NULL,
+	created_on TIMESTAMP NOT NULL,
+	updated_on TIMESTAMP
+);
+
+DROP TABLE IF EXIST Student;
+
+CREATE TAbLE "Student" (
+	student_id serial PRIMARY KEY,
+	"Username" VARCHAR (128) UNIQUE NOT NULL,
+	password VARCHAR (128) NOT NULL,
+	is_new BOOLEAN,
+	year_born INTEGER NOT NULL,
+	created_on TIMESTAMP NOT NULL,
+	updated_on TIMESTAMP
+);
+
+DROP TABLE IF EXIST "Student";
+
+CreaTe TaBle StuDent (
+	sTudEnt_id SEriAl PRIMaRY KeY
+);
