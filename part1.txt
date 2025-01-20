@@ -12,12 +12,12 @@ $ psql -U $(whoami) -d postgres
 
 
 
-CREATE TABLE IF NOT EXIST student (
+CREATE TABLE IF NOT EXISTS student (
 	student_id SERIAL PRIMARY KEY,
 	username VARCHAR(128) NOT NULL
 );
 
-DROP TABLE IF EXIST student;
+DROP TABLE IF EXISTS student;
 
 CREATE TAbLE student (
 	student_id serial PRIMARY KEY,
@@ -29,7 +29,7 @@ CREATE TAbLE student (
 	updated_on TIMESTAMP
 );
 
-DROP TABLE IF EXIST Student;
+DROP TABLE IF EXISTS Student;
 
 CREATE TAbLE "Student" (
 	student_id serial PRIMARY KEY,
@@ -41,8 +41,231 @@ CREATE TAbLE "Student" (
 	updated_on TIMESTAMP
 );
 
-DROP TABLE IF EXIST "Student";
+DROP TABLE IF EXISTS "Student";
 
 CreaTe TaBle StuDent (
 	sTudEnt_id SEriAl PRIMaRY KeY
 );
+
+
+
+
+
+
+PART 2 
+
+CREATE TABLE IF NOT EXISTS public.student (
+	student_id SERIAL PRIMARY KEY,
+	username VARCHAR(128) NOT NULL
+);
+
+INSERT INTO student(username, "password", is_new, year_born, created_on, updated_on)
+VALUES ('Michal', 'helso', TRUE , 1996, '2021-01-01 19:20:25-07' , '2021-01-01 19:20:25-07');
+
+INSERT INTO student(student_id,username, "password", is_new, year_born, created_on, updated_on)
+VALUES ('Marketa', 'helso', TRUE , 1996, '2021-01-01 19:20:25-07' , '2021-01-01 19:20:25-07');
+
+CREATE TABLE "Employee" 
+(
+	"EmployeeId" INT NOT NULL,
+	"LastName" VARCHAR(20) NOT NULL, 
+	"Title" VARCHAR(30),
+	CONSTRAINT "PK_Employee" PRIMARY KEY ("EmployeeId")
+);
+
+
+
+
+
+SELECT "Name","Milliseconds"
+FROM "Track"
+
+SELECT "Bytes","Milliseconds",CAST("Bytes" AS DECIMAL)/"Milliseconds", "Bytes"+"Milliseconds"
+FROM "Track"
+
+SELECT "Name" AS x, "Milliseconds"
+FROM "Track"
+
+SELECT "Name" x, "Milliseconds"
+FROM "Track"
+
+SELECT "Name" , "Composer" , "Name"|| '' || "Composer"
+FROM "Track"
+
+SELECT "Name" , "Composer" , "Name"|| '' || "Composer" as concatenation
+FROM "Track"
+
+
+SELECT DISTINCT "AlbumId"
+FROM "Track"
+
+SELECT DISTINCT "AlbumId", "MediaTypeId"
+FROM "Track"
+
+
+
+SELECT "Name", "Bytes"
+FROM "Track"
+ORDER BY "Bytes"¨
+
+SELECT "Name", "Bytes"
+FROM "Track"
+ORDER BY "Bytes" DESC
+
+SELECT "Name", "Bytes","Milliseconds"
+FROM "Track"
+ORDER BY "Bytes" , "Milliseconds" DESC
+
+SELECT "Name", "Bytes","Milliseconds"
+FROM "Track"
+ORDER BY "Bytes" DESC , "Milliseconds" DESC
+
+SELECT "Name", "Bytes" , "AlbumId"
+FROM "Track"
+ORDER BY "AlbumId" DESC, "Bytes" DESC
+
+SELECT "Name", "Milliseconds", ("Milliseconds"/1000)/60::decimal minutes
+FROM "Track"
+
+
+SQL řadí příkazy v tomto pořadí : FROM -> SELECT -> ORDER BY
+
+
+SELECT "Name", "Bytes", "AlbumId"
+FROM "Track"
+WHERE "Bytes" > 5000000 AND "Bytes" < 6000000
+ORDER BY "Bytes" DESC
+
+SELECT "Name", "Bytes", "AlbumId"
+FROM "Track"
+WHERE "AlbumId" IN (1,2)
+
+SELECT "Name", "Bytes", "AlbumId"
+FROM "Track"
+WHERE "AlbumId" NOT IN (1,2)
+
+
+SELECT "Name", LENGTH("Name") as name_lenght
+FROM "Track"
+WHERE LENGTH("Name" > 5)
+
+SELECT "Name"
+FROM "Track"
+WHERE "Name" LIKE 'F%'
+
+"" - názvy sloupečků
+'' - string
+
+SELECT "Name"
+FROM "Track"
+WHERE "Name" ILIKE 'F%' - velké i malé písmena
+
+
+NEPOUZIVAT '%the%' - NEEFEKTIVNI !!! - hledání the uprostřed stringu (% na začátkunení dobrý (indexovani)!)
+
+
+SELECT *
+FROM "Track"
+LIMIT 5
+OFFSET 3 
+
+-- komentář 
+
+
+SELECT "Name", ROUND("Milliseconds"::DECIMAL/60000, 2) "Minutes"
+FROM "Track"
+WHERE ("Milliseconds"/60000.0) < 5.0
+ORDER BY "Milliseconds" DESC 
+LIMIT 10
+
+
+SELECT DISTINCT "Composer"
+FROM "Track"
+WHERE LENGTH("Composer") BETWEEN 8 AND 15
+ORDER BY "Composer"
+LIMIT 2
+
+
+FETCH NEXT – specifikuje počet řádků, které se mají vrátit. 
+
+C.R.U.D - sada funkcí
+CREATE
+READ
+UPDATE
+DELET
+
+
+ALTER TABLE "Customer"
+RENAME TO customer
+
+
+ALTER TABLE "customer"
+RENAME COLUMN "CustomerId" TO customer_id
+
+SELECT *
+FROM cusotmer
+
+UPDATE customer
+SET 	"FirstName" = 'Someone',
+	"LastName" = 'Someone'
+WHERE customer_id = 2
+
+UPDATE customer
+SET 	"FirstName" = 'Someone',
+	"LastName" = 'Someone'
+WHERE customer_id < 3
+
+
+SELECT * 
+FROM information_schema.columns
+
+
+
+SELECT column_name
+FROM information_schema.columns
+WHERE table_schema ='public' AND table_name='customer'
+
+ALTER TABLE customer
+ADD COLUMN  test_column VARCHAR(256)
+
+
+
+
+ALTER TABLE customer
+ADD COLUMN  test_column_not_null VARCHAR(256);
+
+UPDATE customer
+SET test_column_not_null = 'X';
+
+ALTER TABLE customer
+ALTER COLUMN  test_column_not_null SET NOT NULL;
+
+
+DELETE FROM "Track"
+WHERE "MediaTypeId" = 2
+
+DELETE FROM "Track"
+WHERE "MediaTypeId" = 3
+RETURNING *;
+		- může se hodit pro některé backendové použití
+
+
+DELETE FROM "Track"
+
+
+
+CREATE TABLE car (
+	car_id SERIAL PRIMARY KEY,
+	brand VARCHAR(64)
+);
+
+INSERT INTO car (brand) VALUES ('BMW');
+DELETE FROM car
+INSERT INTO car (brand) VALUES ('MG');
+
+TRUNCATE TABLE car RESTART IDENTITY  - vynuluje klíč
+
+
+TRUNCATE TABLE - rychlejší než DELETE FROM ( doplnit info) funguje na principu transakci v SQL 
+
+
