@@ -269,3 +269,193 @@ TRUNCATE TABLE car RESTART IDENTITY  - vynuluje klíč
 TRUNCATE TABLE - rychlejší než DELETE FROM ( doplnit info) funguje na principu transakci v SQL 
 
 
+ER Diagram -entitno relační diagram
+Primary key
+Foregion key
+
+ALTER TABLE "Invoice" ADD CONSTRAINT "FK_InvoiceCustomer"
+	FOREIGN KEY("CustomerId") REFERENCES "Customer" ("CustomerId") ON DELETE SET NULL
+
+- další možnosti
+	FOREIGN KEY("CustomerId") REFERENCES "Customer" ("CustomerId") ON DELETE NO ACTION
+	FOREIGN KEY("CustomerId") REFERENCES "Customer" ("CustomerId") ON DELETE CASCADE - maže kaskádově
+	FOREIGN KEY("CustomerId") REFERENCES "Customer" ("CustomerId") ON DELETE NO ACTION ON UPDATE NO ACTION
+
+"FK_InvoiceCustomer"
+	FK - foregion key 
+	Invoice - tabulka do která má cizí klíč
+	Custome - tabulka kam odkazuje cizí klíč
+
+DELETE FROM "Customer" WHERE "CustomerId" = 1;  - hodí error
+
+ALTER TABLE car 
+	DROP CONSTRAINT  fk_customer, 
+	ADD CONSTRAINT fk_customer
+		FOREIGN KEY (customer_id) REFERENCES "Customer"("CustomerId") ON DELETE CASCADE ON UPDATE
+	
+- následně jde smazat
+
+
+SELECT *
+FROM table1
+INNER JOIN  table2
+	ON table1.username=test2.username
+
+- vrati prunik hodnot které se nachazí v obou tabulkách (id1 miso == id4 miso)
+
+SELECT *
+FROM test1
+LEFT JOIN test2
+	ON test1.username=test2.username 
+- vratí prunik hodnot a ostatní v 1. tabulce
+
+SELECT *
+FROM test1
+RIGHT JOIN test2
+	ON test1.username=test2.username 
+
+- vratí prunik hodnot a ostatní v 2. tabulce
+
+SELECT *
+FROM test1
+FULL OUTER JOIN test2
+ON test1.username=test2.username
+- namapovaná tabulka 1 na tabulku 2 a navic zbytek zleva s hdonotou null a zbytek z prava s hodnotou null
+
+SELECT *
+FROM test1
+CROSS JOIN test2
+- namapuje vsechny hodnoty z 1. tabulky na všechny hodnoty 2. tabulky = vysledný počet prvků bude n.prvniTabulky*n.druheTabulky (kombinace)
+
+SELECT *
+FROM test1
+UNION
+SELECT *
+FROM test2
+- výstupem všechny řádky obou tabulek nahohodně za sebou ( překlad sjednocení)
+
+SELECT *
+FROM test1
+INTERSECT
+SELECT *
+FROM test2 
+- vypíše průnik tabulek ( id1==id2 and username1==username2)
+
+SELECT username
+FROM test1
+INTERSECT
+SELECT username
+FROM test2 
+- vypíše průnik množin username ( username1==username2)
+
+SELECT *
+FROM test1
+EXCEPT
+SELECT *
+FROM test2 
+ORDR BY username_id_test1
+- vypíše zbytek z pruniku tabulke ( d1!=id2 and username1!=username2)
+
+SELECT COUNT *
+FROM "Invoice" 
+- počet řádků
+
+
+Kdo zaplatil největší částku
+
+SELECT *
+FROM "Invoice"
+ORDER BY "Total"DESC
+
+
+SELECT "Invoice""CustomerId","Total"
+FROM "Inovice"
+JOIN "Customer"
+	ON "Invoice"."CustomerId" = "Customer"."CustomerId"
+
+SELECT *
+FROM "Inovice"
+JOIN "Customer"
+	ON "Invoice"."CustomerId" = "Customer"."CustomerId"
+
+SELECT inv."Total",  cust."FirstName", cust."LastName"
+FROM "Inovice" as inv
+JOIN "Customer" as cust
+	ON inv."CustomerId" = cust."CustomerId"
+ORDER BY inv."Total" DESC
+LIMIT 1
+- s join se casto pouziva alias , pokud ma tabulka stejný nazav sloupcu tak postgres nevi co chci za sloup
+
+
+
+kolik zaplatila hlena clekem
+
+SELECT SUM(inv."Total")
+FROM "Inovice" as inv
+JOIN "Customer" as cust
+	ON inv."CustomerId" = cust."CustomerId"
+WHERE cust."FirstName"='Helena'
+
+
+
+GROP BY
+
+SPLIT ->APLLY -> COMBINE
+
+SELECT "GendreId"
+FROM "Track"
+GROUP BY "GenderId" 
+- pokud nedám do SELECT agregační funkci tak se vypíší všechny hdonoty jedenkrát
+
+
+SELECT "GendreId", COUNT (*)
+FROM "Track"
+WHERE "Bytes" > 8000000
+GROUP BY "Gendre Id"
+
+
+
+- pořádí vykonávání funkcí v SQL (NEJDE IGNOROVAT)
+FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER -> LIMIT
+
+
+
+
+- kolko stoji 2 nejdražší albua pokud chci koupit všechny skladby v nich
+
+SELECT "AlbumId", "Name", SUM("UnitPrice") as total_price
+FROM "Track"
+GROUP BY "AlbumId"
+ORDER BY total_price DESC
+	LIMIT 2
+
+-- vyfiltruj alba , kde je suma cen větší než 8
+SELECT "AlbumId", "Name", SUM("UnitPrice") as total_price
+FROM "Track"
+GROUP BY "AlbumId"
+	HAVING SUM("UnitPrice") > 8
+
+
+SELECT *
+FROM "Track"
+GROUP BY "GenreId", "AlbumId"
+- kombinace všech alb a gendru
+
+SELECT "GenreId", "AlbumId" , COUNT(*)
+FROM "Track"
+GROUP BY "GenreId", "AlbumId"
+
+
+GROUP BY více sloupečků: ... 
+
+- kolik stojí jednotlivé kombinace alb a zanru (nevyzkoušeno)
+SELECT "GenreId", "AlbumId" , SUM("UnitPrice") as total_price
+FROM "Track"
+GROUP BY "GenreId", "AlbumId"
+	
+
+
+
+
+
+	
