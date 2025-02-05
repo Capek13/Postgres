@@ -453,9 +453,113 @@ SELECT "GenreId", "AlbumId" , SUM("UnitPrice") as total_price
 FROM "Track"
 GROUP BY "GenreId", "AlbumId"
 	
+----------
+DROP TABLE IF EXISTS "Track";
+DROP TABLE IF EXISTS "Playlist";
+DROP TABLE IF EXISTS "PlaylistTrack";
+
+CREATE TABLE "Track"
+(
+    "TrackId" INT NOT NULL,
+    "Name" VARCHAR(200) NOT NULL,
+    "AlbumId" INT,
+    "MediaTypeId" INT NOT NULL,
+    "GenreId" INT,
+    "Composer" VARCHAR(220),
+    "Milliseconds" INT NOT NULL,
+    "Bytes" INT,
+    "UnitPrice" NUMERIC(10,2) NOT NULL,
+    CONSTRAINT "PK_Track" PRIMARY KEY  ("TrackId")
+);
+
+CREATE TABLE "Playlist"
+(
+    "PlaylistId" INT NOT NULL,
+    "Name" VARCHAR(120),
+    CONSTRAINT "PK_Playlist" PRIMARY KEY  ("PlaylistId")
+);
+
+CREATE TABLE "PlaylistTrack"
+(
+    "PlaylistId" INT NOT NULL,
+    "TrackId" INT NOT NULL,
+    CONSTRAINT "PK_PlaylistTrack" PRIMARY KEY  ("PlaylistId", "TrackId")
+);
+
+
+-- Ako sa volá prvá skladba podľa abecedy z playlistov, ktorých názov  je tvorený aspoň 12 písmenami 
+SELECT t."Name" 
+FROM "PlaylistTrack" plt
+JOIN "Playlist" pl 
+	ON pl."PlaylistId"=plt."PlaylistId"
+	AND LENGTH(pl."Name") > 12
+JOIN "Track" t 
+	ON t."TrackId"=plt."TrackId"
+ORDER BY t."Name"
+
+Transakce
+- více příkazů tvařicí se jako jedna jediná věc
+- pokud v procesu nastane chyba tak se to vratí na začátek (rollback)
+ACID
+ - atomicity, consistancy, isolation, durability
+ - atomicity, navenek pracují jako jeden příkaz
+ - consistancy - transakce musí splnit všechny podmínky / být validna po dokončení( spravné klíče, musí být vše doplněno co má)
+ - isolation - nevadí když transakce pracují nad jendou tabulkou, tak nenastane zadný problém
+ - durabilyty  - splněná/commitnutá transakce , můžu si být jistý , že transakce doběhla - i pri vypnutí elktřiny
+
+
+-- Uloha: chceme aby sa tieto operacie vykonali naraz
+-- UPDATE account
+-- SET balance=100
+-- WHERE username='Miso'
+
+-- UPDATE account
+-- SET balance=170
+-- WHERE username='Jano'
+
+Začátek transakce
+BEGIN; 
+-- alebo BEGIN TRANSACTION;
+-- alebo BEIGN WORK;
+
+UPDATE account
+SET balance=100
+WHERE username='Miso';
+
+UPDATE account
+SET balance=170
+WHERE username='Jano';
+
+konec transakce
+COMMIT;
+-- alebo COMMIT TRANSACTION;
+-- alebo COMMIT WORK;
+
+transakce může končit i ROLLBACK (ale vrati se to zpět, jako by se nic nestalo, vhodné při použiti s jiným program jazykem)
+ ACID - zapamatovat si (jako jed )
+
+
+Subquery (poddotaz) -pokročilejší technika
+
+-- Najdem si priemer Total
+SELECT AVG("Total")
+FROM "Invoice"
+
+SELECT * 
+FROM "Invoice"
+WHERE "Total" > 5.6519417475728155
+
+
+-- Riesenie pomocou subquery 
+SELECT * 
+FROM "Invoice"
+WHERE "Total" > (
+	SELECT AVG("Total")
+	FROM "Invoice"
+)
 
 
 
 
 
-	
+
